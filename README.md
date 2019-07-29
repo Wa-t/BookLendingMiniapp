@@ -19,3 +19,4 @@ https://org.modao.cc/app/OVz3NVag7RWccjCwm0HrO6aEySQAxqG
 - [Redux](https://cn.redux.js.org/)
 - [Sass](http://sass.bootcss.com/docs/sass-reference/)
 - [微信小程序开发文档](https://developers.weixin.qq.com/miniprogram/dev/framework/)
+- [云开发](https://developers.weixin.qq.com/minigame/dev/wxcloud/basis/getting-started.html)
