@@ -1,13 +1,11 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View } from '@tarojs/components'
-import { AtTabBar } from 'taro-ui'
+import { View, Button, Text } from '@tarojs/components'
+import { AtAvatar } from 'taro-ui';
 import { connect } from '@tarojs/redux'
-import { autobind } from 'core-decorators'
-
-import Personal from '../personal'
 
 import { add, minus, asyncAdd } from '../../actions/counter'
+import Avatar from '../../images/avatar.jpg';
 
 import './index.less'
 
@@ -35,16 +33,14 @@ type PageDispatchProps = {
 
 type PageOwnProps = {}
 
-type PageState = {
-  current: number
-}
+type PageState = {}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
 interface Index {
   props: IProps;
 }
-@autobind
+
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -58,7 +54,7 @@ interface Index {
     dispatch(asyncAdd())
   }
 }))
-class Index extends Component<IProps, PageState> {
+class Index extends Component {
 
   /**
  * 指定config的类型声明为: Taro.Config
@@ -71,13 +67,6 @@ class Index extends Component<IProps, PageState> {
     navigationBarTitleText: '首页'
   }
 
-
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      current: 0,
-    }
-  }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
@@ -88,50 +77,10 @@ class Index extends Component<IProps, PageState> {
 
   componentDidHide() { }
 
-  handleClick(value) {
-    this.setState({
-      current: value
-    })
-  }
-  renderPage() {
-    const { current } = this.state;
-    let page;
-    switch (current) {
-      case 0: {
-        page = <div>Home</div>
-        break;
-      }
-      case 1: {
-        page = <div>借书</div>
-        break;
-      }
-      case 2: {
-        page = <Personal />
-        break;
-      }
-      default: {
-        break;
-      }
-
-    }
-    return page;
-  }
   render() {
     return (
-      <View className='index'>
-        {
-          this.renderPage()
-        }
-        <AtTabBar
-          fixed
-          tabList={[
-            { title: '书库', iconType: 'list' },
-            { title: '借阅', iconType: 'bookmark' },
-            { title: '我的', iconType: 'user' }
-          ]}
-          onClick={this.handleClick.bind(this)}
-          current={this.state.current}
-        />
+      <View className='personal'>
+        <AtAvatar image={Avatar}></AtAvatar>
       </View>
     )
   }
