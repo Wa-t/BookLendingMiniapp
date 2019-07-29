@@ -64,7 +64,7 @@ class Index extends Component {
  * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
  */
   config: Config = {
-    navigationBarTitleText: '首页'
+    navigationBarTitleText: '个人中心'
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,7 +80,10 @@ class Index extends Component {
   render() {
     return (
       <View className='personal'>
-        <AtAvatar image={Avatar}></AtAvatar>
+        <View className="info">
+          <AtAvatar image={Avatar} circle />
+          <div>name</div>
+        </View>
       </View>
     )
   }
