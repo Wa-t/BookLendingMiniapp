@@ -8,7 +8,19 @@
 
 https://org.modao.cc/app/OVz3NVag7RWccjCwm0HrO6aEySQAxqG
 
+
+
 # Experience 扫码体验
+
+
+# Design Summary  设计概要
+
+## 1. 数据结构
+
+- 书籍信息
+
+|-- | --| -- | --| --|
+|书籍名称| | | | |
 
 
 # Other
