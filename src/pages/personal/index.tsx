@@ -2,10 +2,11 @@ import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { AtAvatar } from 'taro-ui';
+import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
 import { add, minus, asyncAdd } from '../../actions/counter'
-import Avatar from '../../images/avatar.jpg';
+import Avatar from '../../images/avatar.jpg'
 
 import './index.less'
 
@@ -39,8 +40,10 @@ type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
 interface Index {
   props: IProps;
+  state: PageState;
 }
 
+@autobind
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({

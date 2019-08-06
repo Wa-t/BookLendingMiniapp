@@ -6,6 +6,7 @@ import { connect } from '@tarojs/redux'
 import { autobind } from 'core-decorators'
 
 import Personal from '../personal'
+import BookStore from '../bookStore'
 
 import { add, minus, asyncAdd } from '../../actions/counter'
 
@@ -43,6 +44,7 @@ type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
 interface Index {
   props: IProps;
+  state: PageState;
 }
 @autobind
 @connect(({ counter }) => ({
@@ -58,7 +60,7 @@ interface Index {
     dispatch(asyncAdd())
   }
 }))
-class Index extends Component<IProps, PageState> {
+class Index extends Component {
 
   /**
  * 指定config的类型声明为: Taro.Config
@@ -98,7 +100,7 @@ class Index extends Component<IProps, PageState> {
     let page;
     switch (current) {
       case 0: {
-        page = <div>Home</div>
+        page = <BookStore />
         break;
       }
       case 1: {
