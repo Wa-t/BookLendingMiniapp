@@ -46,7 +46,7 @@ interface Index {
   props: IProps;
   state: PageState;
 }
-@autobind
+
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -60,6 +60,7 @@ interface Index {
     dispatch(asyncAdd())
   }
 }))
+@autobind
 class Index extends Component {
 
   /**

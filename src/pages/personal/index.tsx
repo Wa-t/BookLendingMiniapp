@@ -1,6 +1,6 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Button, Text } from '@tarojs/components'
+import { View } from '@tarojs/components'
 import { AtAvatar } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
@@ -43,7 +43,7 @@ interface Index {
   state: PageState;
 }
 
-@autobind
+
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -57,6 +57,7 @@ interface Index {
     dispatch(asyncAdd())
   }
 }))
+@autobind
 class Index extends Component {
 
   /**

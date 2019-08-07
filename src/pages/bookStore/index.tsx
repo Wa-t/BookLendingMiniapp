@@ -2,7 +2,7 @@ import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { AtTabs, AtTabsPane, AtGrid } from 'taro-ui'
 import { connect } from '@tarojs/redux'
-
+import { autobind } from 'core-decorators'
 import { updataState, queryBookList } from '../../actions/bookStore'
 
 import './index.less'
@@ -30,8 +30,8 @@ type PageStateProps = {
 }
 
 type PageDispatchProps = {
-  updataState: () => void
-  queryBookList: () => any
+  // updataState: () => void
+  // queryBookList: () => any
   // dispatch: ({ type: string, payload: any }) => PageStateProps
 }
 
@@ -52,6 +52,7 @@ interface Index {
   bookStore,
   dispatch,
 }))
+@autobind
 class Index extends Component {
 
   /**
@@ -82,16 +83,17 @@ class Index extends Component {
   componentDidHide() { }
 
   handleClick(tabKey) {
-    const { dispatch } = this.props;
+    // const { dispatch } = this.props;
+    // console.log(this.props.dispatch)
     this.setState({
       current: tabKey,
     })
-    dispatch(queryBookList({}));
+    // dispatch(queryBookList({}));
   }
 
   renderBookList() {
     const { current } = this.state
-    console.log(this.props)
+    // console.log(this.props.dispatch)
     // const { bookList } = this.props.bookStore;
     const data = [
       {
@@ -110,14 +112,6 @@ class Index extends Component {
         image: 'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t10660/330/203667368/1672/801735d7/59c85643N31e68303.png',
         value: '新品首发'
       },
-      {
-        image: 'https://img14.360buyimg.com/jdphoto/s72x72_jfs/t17251/336/1311038817/3177/72595a07/5ac44618Na1db7b09.png',
-        value: '领京豆'
-      },
-      {
-        image: 'https://img30.360buyimg.com/jdphoto/s72x72_jfs/t5770/97/5184449507/2423/294d5f95/595c3b4dNbc6bc95d.png',
-        value: '手机馆'
-      }
     ]
     // const filterBookList =bookList.map()
     return (
@@ -126,7 +120,7 @@ class Index extends Component {
   }
 
   render() {
-    const tabList = [{ title: '标签页1' }, { title: '标签页2' }, { title: '标签页3' }]
+    const tabList = [{ title: '综合' }, { title: '借阅最多' }, { title: '最新上架' }]
     return (
       <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick}>
         <AtTabsPane current={this.state.current} index={0} >
