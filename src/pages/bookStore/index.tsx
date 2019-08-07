@@ -24,12 +24,15 @@ type Book = {
 
 type PageStateProps = {
   bookStore: {
-    bookList: Array<Book>
-  }
+    bookList: Array<Book>;
+  },
+  dispatch
 }
 
 type PageDispatchProps = {
-  dispatch: ({ type: string, payload: any }) => PageStateProps
+  updataState: () => void
+  queryBookList: () => any
+  // dispatch: ({ type: string, payload: any }) => PageStateProps
 }
 
 type PageOwnProps = {}
@@ -45,7 +48,7 @@ interface Index {
   state: PageState;
 }
 
-@connect(({ bookStore, dispatch }) => ({
+@connect(({ bookStore }, dispatch) => ({
   bookStore,
   dispatch,
 }))
@@ -83,12 +86,13 @@ class Index extends Component {
     this.setState({
       current: tabKey,
     })
-    // dispatch(queryBookList({}));
+    dispatch(queryBookList({}));
   }
 
   renderBookList() {
     const { current } = this.state
-    const { bookList } = this.props.bookStore;
+    console.log(this.props)
+    // const { bookList } = this.props.bookStore;
     const data = [
       {
         image: 'https://img12.360buyimg.com/jdphoto/s72x72_jfs/t6160/14/2008729947/2754/7d512a86/595c3aeeNa89ddf71.png',
