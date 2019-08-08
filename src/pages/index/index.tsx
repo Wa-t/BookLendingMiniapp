@@ -49,6 +49,23 @@ interface Index {
   state: PageState;
 }
 
+// const pageList =  [
+//   {
+//     id: 0,
+//     page: <BookStore/>,
+//     navigatorText: '书库'
+//   },
+//   {
+//     id: 1,
+//     page: this.renderIndex(),
+//     navigatorText: 'fasd'
+//   },
+//   {
+//     id: 0,
+//     page: <Personal/>,
+//     navigatorText: 'fasd'
+//   }
+// ]
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -97,16 +114,23 @@ class Index extends Component {
       current: value
     })
   }
+  renderIndex () {
+    return (
+    <View>
+      hello world
+      </View>)
+  }
+  
   renderView() {
     const { current } = this.state;
-    let view
+    let view: any = null;
     switch (current) {
       case 0: {
         view = <BookStore />;
         break;
       }
       case 1: {
-        view = <div>home</div>;
+        view = this.renderIndex();
         break;
       }
       case 2: {
@@ -114,9 +138,11 @@ class Index extends Component {
         break;
       }
     }
+ 
     return view;
   }
   render() {
+    console.log('render')
     return (
       <View className='index'>
         {
