@@ -11,15 +11,14 @@ export const updataState = (bookList) => {
 // 异步的action
 export function queryBookList(params: any) {
     return dispatch => {
-        request('/api', { data: params })
-            .then(res => {
-                const { data, code } = res;
-                if (code === '200') {
-                    dispatch(updataState(data))
-                }
-            })
-            .catch(e => {
-                console.log(e)
-            });
+        request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', {
+        }).then(res => {
+            const { success, data } = res.data;
+            if (success) {
+                dispatch(updataState(data.list))
+            }
+        }).catch(e => {
+            console.log(e)
+        });
     }
 }
