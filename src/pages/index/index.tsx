@@ -22,6 +22,7 @@ import './index.less'
 //
 // #endregion
 
+
 type PageStateProps = {
   counter: {
     num: number
@@ -37,7 +38,8 @@ type PageDispatchProps = {
 type PageOwnProps = {}
 
 type PageState = {
-  current: number
+  current: number;
+  // views: any
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -74,7 +76,6 @@ class Index extends Component {
     navigationBarTitleText: '首页'
   }
 
-
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -96,34 +97,30 @@ class Index extends Component {
       current: value
     })
   }
-  renderPage() {
+  renderView() {
     const { current } = this.state;
-    let page;
+    let view
     switch (current) {
       case 0: {
-        page = <BookStore />
+        view = <BookStore />;
         break;
       }
       case 1: {
-        page = <div>借书</div>
+        view = <div>home</div>;
         break;
       }
       case 2: {
-        page = <Personal />
+        view = <Personal />;
         break;
       }
-      default: {
-        break;
-      }
-
     }
-    return page;
+    return view;
   }
   render() {
     return (
       <View className='index'>
         {
-          this.renderPage()
+          this.renderView()
         }
         <AtTabBar
           fixed
@@ -132,7 +129,7 @@ class Index extends Component {
             { title: '借阅', iconType: 'bookmark' },
             { title: '我的', iconType: 'user' }
           ]}
-          onClick={this.handleClick.bind(this)}
+          onClick={this.handleClick}
           current={this.state.current}
         />
       </View>
