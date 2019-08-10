@@ -1,9 +1,11 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { AtTabBar } from 'taro-ui'
+import { AtTabBar, AtSearchBar, AtButton  } from 'taro-ui'
 import { connect } from '@tarojs/redux'
 import { autobind } from 'core-decorators'
+import request from '../../utils/request';
+
 
 import Personal from '../personal'
 import BookStore from '../bookStore'
@@ -33,13 +35,15 @@ type PageDispatchProps = {
   add: () => void
   dec: () => void
   asyncAdd: () => any
+  dispatch: () => void
 }
 
 type PageOwnProps = {}
 
 type PageState = {
   current: number;
-  // views: any
+  searchValue: string, // 搜索输入框value
+  cameraCode: string, // 扫描结果
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -48,24 +52,10 @@ interface Index {
   props: IProps;
   state: PageState;
 }
+interface ScanCode extends Taro.scanCode.Param {
+  success: Function,
+}
 
-// const pageList =  [
-//   {
-//     id: 0,
-//     page: <BookStore/>,
-//     navigatorText: '书库'
-//   },
-//   {
-//     id: 1,
-//     page: this.renderIndex(),
-//     navigatorText: 'fasd'
-//   },
-//   {
-//     id: 0,
-//     page: <Personal/>,
-//     navigatorText: 'fasd'
-//   }
-// ]
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -92,17 +82,30 @@ class Index extends Component {
   config: Config = {
     navigationBarTitleText: '首页'
   }
-
+  param: ScanCode = {
+    success (params: any) {
+      // params.result 打印扫码结果
+      request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', {scanCode: params.result})
+        .then((res: any) => console.log(res))
+    }
+  }
   constructor(props: IProps) {
     super(props);
     this.state = {
       current: 0,
+      searchValue: '', // 搜索输入框value
+      cameraCode: '', // 扫描结果
     }
   }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
-
+  shouldComponentUpdate(nextProps: IProps, nextState: PageState) {
+    if (JSON.stringify(this.props) !== JSON.stringify(nextProps) || JSON.stringify(this.state) !== JSON.stringify(nextState)) {
+      return true
+    }
+    return false
+  }
   componentWillUnmount() { }
 
   componentDidShow() { }
@@ -110,15 +113,33 @@ class Index extends Component {
   componentDidHide() { }
 
   handleClick(value) {
-    this.setState({
-      current: value
-    })
+    this.setState({ current: value })
+  }
+  handleSearchChange(value: string) {
+    this.setState({ searchValue: value })
+  }
+  handleScanCode() {
+    Taro.scanCode(this.param)
+  }
+  handleSearch() {
+    const { dispatch } = this.props;
+    dispatch();
   }
   renderIndex () {
+    const { searchValue } = this.state
     return (
     <View>
-      hello world
-      </View>)
+      <AtSearchBar
+        className="search"
+        showActionButton
+        value={searchValue}
+        placeholder="请输入书名/作者"
+        onChange={this.handleSearchChange}
+        onActionClick={this.handleSearch}
+      />
+      <View className="scan-icon" />
+      <AtButton className='scanCode-btn' circle={true} onClick={this.handleScanCode}>扫码借书</AtButton>
+    </View>)
   }
   
   renderView() {
@@ -145,9 +166,7 @@ class Index extends Component {
     console.log('render')
     return (
       <View className='index'>
-        {
-          this.renderView()
-        }
+        {this.renderView()}
         <AtTabBar
           fixed
           tabList={[
