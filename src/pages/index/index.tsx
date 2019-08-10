@@ -114,13 +114,13 @@ class Index extends Component {
       current: value
     })
   }
-  renderIndex () {
+  renderIndex() {
     return (
-    <View>
-      hello world
+      <View>
+        hello world
       </View>)
   }
-  
+
   renderView() {
     const { current } = this.state;
     let view: any = null;
@@ -138,16 +138,18 @@ class Index extends Component {
         break;
       }
     }
- 
+
     return view;
   }
   render() {
     console.log('render')
     return (
       <View className='index'>
-        {
-          this.renderView()
-        }
+        <View className="view-container">
+          {
+            this.renderView()
+          }
+        </View>
         <AtTabBar
           fixed
           tabList={[
