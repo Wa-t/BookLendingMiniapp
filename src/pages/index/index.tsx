@@ -56,6 +56,12 @@ interface ScanCode extends Taro.scanCode.Param {
   success: Function,
 }
 
+const navigationBarTitles = {
+  0: '书库',
+  1: '借阅',
+  2: '个人信息'
+}
+
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -80,7 +86,7 @@ class Index extends Component {
  * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
  */
   config: Config = {
-    navigationBarTitleText: '首页'
+    navigationBarTitleText: navigationBarTitles[this.state.current] || '首页'
   }
   param: ScanCode = {
     success(params: any) {

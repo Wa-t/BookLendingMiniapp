@@ -1,13 +1,11 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View } from '@tarojs/components'
-import { AtAvatar, AtList, AtListItem } from 'taro-ui';
+import { View, Text } from '@tarojs/components'
+import { AtAvatar, AtList, AtListItem, AtFloatLayout } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
 import { add, minus, asyncAdd } from '../../actions/counter'
-import Avatar from '../../images/avatar.jpg'
-
 import './index.less'
 
 // #region 书写注意
@@ -21,9 +19,19 @@ import './index.less'
 // #endregion
 
 type PageStateProps = {
-  counter: {
-    num: number
+  personal: {
+
   }
+}
+
+type UserInfo = {
+  avatarUrl?: string
+  city?: string
+  country?: string
+  gender?: number
+  language?: string
+  nickName?: string
+  province?: string
 }
 
 type PageDispatchProps = {
@@ -34,7 +42,10 @@ type PageDispatchProps = {
 
 type PageOwnProps = {}
 
-type PageState = {}
+type PageState = {
+  isOpened: boolean
+  userInfo: UserInfo,
+}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
@@ -44,8 +55,8 @@ interface Index {
 }
 
 
-@connect(({ counter }) => ({
-  counter
+@connect(({ personal }) => ({
+  personal
 }), (dispatch) => ({
   add() {
     dispatch(add())
@@ -71,43 +82,110 @@ class Index extends Component {
     navigationBarTitleText: '个人中心'
   }
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      isOpened: false,
+      userInfo: {}
+    }
+  }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
 
+  componentDidMount() {
+    const _this = this
+    Taro.getSetting({
+      success(res) {
+        console.log(res.authSetting['scope.userInfo'])
+        if (res.authSetting['scope.userInfo']) {
+          Taro.getUserInfo({
+            success: function (res) {
+              console.log(res)
+              const userInfo = JSON.parse(res.rawData)
+              console.log(userInfo)
+              _this.setState({
+                userInfo,
+              })
+            }
+          })
+        } else {
+          _this.setState({ isOpened: true })
+          Taro.authorize({
+            scope: 'scope.userInfo',
+          }).then(res => {
+            console.log(res, 'authorize')
+          }).catch(e => {
+            console.log(e, 'authorize')
+          })
+        }
+      }
+    })
+  }
   componentWillUnmount() { }
 
   componentDidShow() { }
 
   componentDidHide() { }
 
+  handleClose() {
+
+  }
+
   render() {
+    const { isOpened, userInfo } = this.state
     return (
       <View className='personal'>
         <View className="info">
-          <AtAvatar image={Avatar} circle />
-          <div>name</div>
+          <View className="avatar">
+            <AtAvatar customStyle={{ display: 'inline-block' }} image={userInfo.avatarUrl} circle size="large" />
+          </View>
+          <Text className="name">{userInfo.nickName}</Text>
         </View>
         <AtList>
           <AtListItem
-            title='标题文字'
+            title='我的借阅'
             arrow='right'
-            thumb='https://img12.360buyimg.com/jdphoto/s72x72_jfs/t6160/14/2008729947/2754/7d512a86/595c3aeeNa89ddf71.png'
+            iconInfo={{
+              size: 20,
+              color: '#F05359',
+              value: 'folder',
+            }}
           />
           <AtListItem
-            title='标题文字'
-            note='描述信息'
+            title='我的上架'
+            // note='描述信息'
             arrow='right'
-            thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+            iconInfo={{
+              size: 20,
+              color: '#F05359',
+              value: 'menu',
+            }}
           />
           <AtListItem
-            title='标题文字'
-            note='描述信息'
-            extraText='详细信息'
+            title='账号设置'
+            // note='描述信息'
             arrow='right'
-            thumb='http://img12.360buyimg.com/jdphoto/s72x72_jfs/t10660/330/203667368/1672/801735d7/59c85643N31e68303.png'
+            iconInfo={{
+              size: 20,
+              color: '#F05359',
+              value: 'settings',
+            }}
+          />
+          <AtListItem
+            title='退出登录'
+            // note='描述信息'
+            arrow='right'
+            iconInfo={{
+              size: 20,
+              color: '#F05359',
+              value: 'arrow-right',
+            }}
           />
         </AtList>
+        <AtFloatLayout isOpened={isOpened} onClose={this.handleClose}>
+          <button open-type='getUserInfo' >获取授权</button>
+        </AtFloatLayout>
       </View>
     )
   }
