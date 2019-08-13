@@ -117,7 +117,7 @@ class Index extends Component {
   handleScanCode() {
     Taro.scanCode().then((param: any) => {
       request(`https://www.98api.cn/api/isbn.php?isbn=${param.result}`).then((res: any) => {
-        const { data, statusCode } = res;
+        const { data, statusCode } = res
         if (statusCode === 200) {
           this.setState({ bookDetail: data })
         }
