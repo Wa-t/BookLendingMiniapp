@@ -131,6 +131,11 @@ class Index extends Component {
   handleClose() {
 
   }
+  onOpenBorrow() {
+    Taro.navigateTo({
+      url: '/pages/borrow/index'
+    })
+  }
 
   render() {
     const { isOpened, userInfo } = this.state
@@ -151,6 +156,7 @@ class Index extends Component {
               color: '#F05359',
               value: 'folder',
             }}
+            onClick={this.onOpenBorrow}
           />
           <AtListItem
             title='我的上架'

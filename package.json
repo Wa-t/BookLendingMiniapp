@@ -2,7 +2,7 @@
   "name": "myApp",
   "version": "1.0.0",
   "private": true,
-  "description": "项目项目",
+  "description": "一款基于 Taro.js 的多端运行小程序。支持图书借阅、查询、评论等功能",
   "templateInfo": {
     "name": "redux",
     "typescript": true,

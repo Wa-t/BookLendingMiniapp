@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./dist",
   "projectname": "myApp",
-  "description": "项目项目",
+  "description": "一款基于 Taro.js 的多端运行小程序。支持图书借阅、查询、评论等功能",
   "appid": "wx7327f0704d93f7f5",
   "setting": {
     "urlCheck": true,
