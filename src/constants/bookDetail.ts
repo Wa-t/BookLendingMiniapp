@@ -1,0 +1,3 @@
+export const QUERY_DETAIL = 'QUERY_DETAIL'
+export const QUERY_RECORD = 'QUERY_RECORD'
+export const UPDATE_STATE = 'UPDATE_STATE'

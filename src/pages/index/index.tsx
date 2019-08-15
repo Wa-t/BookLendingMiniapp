@@ -1,6 +1,6 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View } from '@tarojs/components'
+import { View, Image } from '@tarojs/components'
 import { AtTabBar, AtSearchBar, AtButton } from 'taro-ui'
 import { connect } from '@tarojs/redux'
 import { autobind } from 'core-decorators'
@@ -43,7 +43,7 @@ type PageOwnProps = {}
 type PageState = {
   current: number;
   searchValue: string, // 搜索输入框value
-  cameraCode: string, // 扫描结果
+  bookDetail: any, // 图书详情
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -51,9 +51,6 @@ type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 interface Index {
   props: IProps;
   state: PageState;
-}
-interface ScanCode extends Taro.scanCode.Param {
-  success: Function,
 }
 
 const navigationBarTitles = {
@@ -88,19 +85,12 @@ class Index extends Component {
   config: Config = {
     navigationBarTitleText: navigationBarTitles[this.state.current] || '首页'
   }
-  param: ScanCode = {
-    success(params: any) {
-      // params.result 打印扫码结果
-      request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', { scanCode: params.result })
-        .then((res: any) => console.log(res))
-    }
-  }
   constructor(props: IProps) {
     super(props);
     this.state = {
       current: 0,
       searchValue: '', // 搜索输入框value
-      cameraCode: '', // 扫描结果
+      bookDetail: {}, // 图书详情
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -125,14 +115,21 @@ class Index extends Component {
     this.setState({ searchValue: value })
   }
   handleScanCode() {
-    Taro.scanCode(this.param)
+    Taro.scanCode().then((param: any) => {
+      request(`https://www.98api.cn/api/isbn.php?isbn=${param.result}`).then((res: any) => {
+        const { data, statusCode } = res
+        if (statusCode === 200) {
+          this.setState({ bookDetail: data })
+        }
+      })
+    })
   }
   handleSearch() {
     const { dispatch } = this.props;
     dispatch();
   }
   renderIndex() {
-    const { searchValue } = this.state
+    const { searchValue, bookDetail } = this.state
     return (
       <View>
         <AtSearchBar
@@ -145,6 +142,25 @@ class Index extends Component {
         />
         <View className="scan-icon" />
         <AtButton className='scanCode-btn' circle={true} onClick={this.handleScanCode}>扫码借书</AtButton>
+        {Object.keys(bookDetail).length > 1 && <View className='at-article'>
+          <View className='at-article__h1'>
+            {bookDetail.title}
+          </View>
+          <View className='at-article__info'>
+            {bookDetail.author && bookDetail.author.map((item: any)=>item.name)}
+          </View>
+          <View className='at-article__info'>
+            发版日期：{bookDetail.published} 发版单位：{bookDetail.publisher}
+          </View>
+          <View className='at-article__content'>
+            <View className='at-article__section'>
+              <View className='at-article__h2'>页数：{bookDetail.page}</View>
+              <View className='at-article__h2'>页数：{bookDetail.price}</View>
+              <View className='at-article__p'>{bookDetail.description}</View>
+              <Image className='at-article__img' src={`${bookDetail.logo}`} mode='widthFix' />
+            </View>
+          </View>
+        </View>}
       </View>)
   }
 
