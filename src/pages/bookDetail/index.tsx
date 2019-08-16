@@ -24,7 +24,7 @@ type PageStateProps = {
   }
 }
 
-type UserInfo = {
+type BookDetail = {
   avatarUrl?: string
   city?: string
   country?: string
@@ -58,15 +58,6 @@ interface Index {
 @connect(({ personal }) => ({
   personal
 }), (dispatch) => ({
-  add() {
-    dispatch(add())
-  },
-  dec() {
-    dispatch(minus())
-  },
-  asyncAdd() {
-    dispatch(asyncAdd())
-  }
 }))
 @autobind
 class Index extends Component {
@@ -133,59 +124,10 @@ class Index extends Component {
   }
 
   render() {
-    const { isOpened, userInfo } = this.state
+    const {   } = this.state
     return (
-      <View className='personal'>
-        <View className="info">
-          <View className="avatar">
-            <AtAvatar customStyle={{ display: 'inline-block' }} image={userInfo.avatarUrl} circle size="large" />
-          </View>
-          <Text className="name">{userInfo.nickName}</Text>
-        </View>
-        <AtList>
-          <AtListItem
-            title='我的借阅'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'folder',
-            }}
-          />
-          <AtListItem
-            title='我的上架'
-            // note='描述信息'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'menu',
-            }}
-          />
-          <AtListItem
-            title='账号设置'
-            // note='描述信息'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'settings',
-            }}
-          />
-          <AtListItem
-            title='退出登录'
-            // note='描述信息'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'arrow-right',
-            }}
-          />
-        </AtList>
-        <AtFloatLayout isOpened={isOpened} onClose={this.handleClose}>
-          <button open-type='getUserInfo' >获取授权</button>
-        </AtFloatLayout>
+      <View className='bookDetail'>
+
       </View>
     )
   }
