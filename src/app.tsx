@@ -27,7 +27,8 @@ class App extends Component {
   config: Config = {
     pages: [
       'pages/index/index',
-      'pages/bookDetail/index'
+      'pages/bookDetail/index',
+      'pages/borrow/index',
       // 'pages/personal/index'
     ],
     window: {

@@ -5,8 +5,6 @@ const INITIAL_STATE = {
 }
 
 export default function bookStore(state = INITIAL_STATE, action) {
-    console.log(state, 'state')
-    console.log(action, 'action')
     switch (action.type) {
         case UPDATE_STATE:
             return {
