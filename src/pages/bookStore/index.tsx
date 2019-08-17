@@ -24,9 +24,9 @@ type Book = {
 
 type PageStateProps = {
   bookStore: {
-    bookList: Array<Book>;
+    bookList: Book[];
   },
-  dispatch
+  dispatch: (arg: any) => any
 }
 
 type PageDispatchProps = {
@@ -107,6 +107,7 @@ class Index extends Component {
   }
 
   render() {
+    console.warn(this.props)
     const tabList = [{ title: '综合' }, { title: '借阅最多' }, { title: '最新上架' }]
     return (
       <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick}>

@@ -19,17 +19,17 @@ import './index.less'
 // #endregion
 
 type Book = {
-  id: string
-  image: string;
-  value: string;
-  expireDate: string
+  bookId: string
+  bookName: string
+  shouldReturnDate: string
+  borrowDate: string
 }
 
 type PageStateProps = {
   borrow: {
     borrowList: Array<Book>;
   },
-  dispatch
+  dispatch: (arg: any) => any
 }
 
 type PageDispatchProps = {
@@ -76,7 +76,7 @@ class Index extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    // dispatch(queryBookList({}))
+    dispatch(queryBorrowList({}))
   }
   componentWillUnmount() { }
 
@@ -86,7 +86,6 @@ class Index extends Component {
 
   handleClick(tabKey) {
     const { dispatch } = this.props;
-    // console.log(this.props.dispatch)
     this.setState({
       current: tabKey,
     })
@@ -113,10 +112,10 @@ class Index extends Component {
       }
     ]
     const { borrowList } = this.props.borrow;
-    console.log('this.props', this.props)
+    console.log('this.props', this.props.dispatch)
     return (
       <View>
-        <View className='at-row at-row__justify--center'>
+        <View className='at-row at-row__justify--center' style={{ lineHeight: '100rpx', height: '100rpx' }}>
           <View className='at-col at-col-5' style={{ textAlign: 'center' }}>书籍名称</View>
           <View className='at-col at-col-5' style={{ textAlign: 'center' }}>应还日期</View>
         </View>
@@ -128,7 +127,7 @@ class Index extends Component {
               // isOpened={item.isOpened}
               options={swipeOperation}
             >
-              <AtListItem title={item.value} extraText={item.expireDate} />
+              <AtListItem title={item.bookName} extraText={item.shouldReturnDate} />
             </AtSwipeAction>
           ))}
         </AtList>
