@@ -107,13 +107,24 @@ class Index extends Component {
               style="width: 100px; height: 100px"
               src="https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0cc74ef9a3773912db268361c8188675/9922720e0cf3d7ca810f3732f81fbe096a63a9fd.jpg" />
             </View>
-            <View className="at-col at-col-7">info</View>
+            <View className="at-col at-col-7 info">
+              <View className="bookName">霍乱时期的爱情</View>
+              <View className="bookInfo">
+                <View className="infoList">作者：</View>       
+                <View className="infoList">分类：</View>
+                <View className="infoList">出版信息：</View>
+                <View className="infoList">类型：</View>
+                <View >
+                  评分：
+                </View>
+              </View>
+            </View>
           </View>
-          <AtDivider />
+          <AtDivider height="30"/>
           <View>
-            内容简介
+            <View className="title">内容简介</View>
           </View>
-          <AtDivider />
+          <AtDivider height="30" />
 
           <View>借阅记录</View>
 
