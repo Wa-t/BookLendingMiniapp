@@ -1,7 +1,7 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { AtAvatar, AtList, AtListItem, AtFloatLayout } from 'taro-ui';
+import { AtDivider } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
@@ -70,7 +70,7 @@ class Index extends Component {
  * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
  */
   config: Config = {
-    navigationBarTitleText: '个人中心'
+    navigationBarTitleText: '书籍详情'
   }
 
   constructor(props) {
@@ -85,33 +85,7 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    const _this = this
-    Taro.getSetting({
-      success(res) {
-        console.log(res.authSetting['scope.userInfo'])
-        if (res.authSetting['scope.userInfo']) {
-          Taro.getUserInfo({
-            success: function (res) {
-              console.log(res)
-              const userInfo = JSON.parse(res.rawData)
-              console.log(userInfo)
-              _this.setState({
-                userInfo,
-              })
-            }
-          })
-        } else {
-          _this.setState({ isOpened: true })
-          Taro.authorize({
-            scope: 'scope.userInfo',
-          }).then(res => {
-            console.log(res, 'authorize')
-          }).catch(e => {
-            console.log(e, 'authorize')
-          })
-        }
-      }
-    })
+    
   }
   componentWillUnmount() { }
 
@@ -127,6 +101,32 @@ class Index extends Component {
     const {   } = this.state
     return (
       <View className='bookDetail'>
+          <View className="at-row"> 
+            <View className="at-col at-col-5 bookInfoLeft">
+              <image 
+              style="width: 100px; height: 100px"
+              src="https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0cc74ef9a3773912db268361c8188675/9922720e0cf3d7ca810f3732f81fbe096a63a9fd.jpg" />
+            </View>
+            <View className="at-col at-col-7 info">
+              <View className="bookName">霍乱时期的爱情</View>
+              <View className="bookInfo">
+                <View className="infoList">作者：</View>       
+                <View className="infoList">分类：</View>
+                <View className="infoList">出版信息：</View>
+                <View className="infoList">类型：</View>
+                <View >
+                  评分：
+                </View>
+              </View>
+            </View>
+          </View>
+          <AtDivider height="30"/>
+          <View>
+            <View className="title">内容简介</View>
+          </View>
+          <AtDivider height="30" />
+
+          <View>借阅记录</View>
 
       </View>
     )
