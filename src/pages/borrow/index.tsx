@@ -112,7 +112,6 @@ class Index extends Component {
       }
     ]
     const { borrowList } = this.props.borrow;
-    console.log('this.props', this.props.dispatch)
     return (
       <View>
         <View className='at-row at-row__justify--center' style={{ lineHeight: '100rpx', height: '100rpx' }}>
