@@ -155,7 +155,7 @@ class Index extends Component {
           <View className='at-article__content'>
             <View className='at-article__section'>
               <View className='at-article__h2'>页数：{bookDetail.page}</View>
-              <View className='at-article__h2'>页数：{bookDetail.price}</View>
+              <View className='at-article__h2'>价格：{bookDetail.price}</View>
               <View className='at-article__p'>{bookDetail.description}</View>
               <Image className='at-article__img' src={`${bookDetail.logo}`} mode='widthFix' />
             </View>

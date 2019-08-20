@@ -88,7 +88,6 @@ class Index extends Component {
 
   handleClick(tabKey) {
     const { dispatch } = this.props;
-    // console.log(this.props.dispatch)
     this.setState({
       current: tabKey,
     })
@@ -96,18 +95,14 @@ class Index extends Component {
   }
 
   renderBookList() {
-    console.log('-----------')
-
     const { bookStore } = this.props
     const { bookList } = bookStore
-    // const filterBookList =bookList.map()
     return (
       <AtGrid data={bookList} />
     )
   }
 
   render() {
-    console.warn(this.props)
     const tabList = [{ title: '综合' }, { title: '借阅最多' }, { title: '最新上架' }]
     return (
       <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick}>

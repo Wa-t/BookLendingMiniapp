@@ -1,11 +1,10 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
-import { AtAvatar, AtList, AtListItem, AtFloatLayout } from 'taro-ui';
+import { View, Text, Image } from '@tarojs/components'
+import { AtCard, AtList, AtListItem, AtSearchBar  } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
-import { add, minus, asyncAdd } from '../../actions/counter'
 import './index.less'
 
 // #region 书写注意
@@ -17,22 +16,27 @@ import './index.less'
 // ref: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20796
 //
 // #endregion
+type IBook = {
+  src: string,
+  name: string,
+}
+type IApply = {
+  id: string,
+  icon: string,
+  name: string,
+  time: string,
+  zan: number,
+  content: string,
+}
+type IComment = IApply & {
+  apply?: Array<IApply>
+}
 
 type PageStateProps = {
-  personal: {
-
-  }
+  book: IBook,
+  comments: Array<IComment>,
 }
 
-type UserInfo = {
-  avatarUrl?: string
-  city?: string
-  country?: string
-  gender?: number
-  language?: string
-  nickName?: string
-  province?: string
-}
 
 type PageDispatchProps = {
   add: () => void
@@ -43,8 +47,7 @@ type PageDispatchProps = {
 type PageOwnProps = {}
 
 type PageState = {
-  isOpened: boolean
-  userInfo: UserInfo,
+  value: string,
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -55,18 +58,8 @@ interface Index {
 }
 
 
-@connect(({ personal }) => ({
-  personal
-}), (dispatch) => ({
-  add() {
-    dispatch(add())
-  },
-  dec() {
-    dispatch(minus())
-  },
-  asyncAdd() {
-    dispatch(asyncAdd())
-  }
+@connect((bookComments) => bookComments, (dispatch) => ({
+  dispatch,
 }))
 @autobind
 class Index extends Component {
@@ -85,8 +78,7 @@ class Index extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isOpened: false,
-      userInfo: {}
+      value: '',
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -97,10 +89,13 @@ class Index extends Component {
     const _this = this
     Taro.getSetting({
       success(res) {
+        console.log(res.authSetting['scope.userInfo'])
         if (res.authSetting['scope.userInfo']) {
           Taro.getUserInfo({
             success: function (res) {
+              console.log(res)
               const userInfo = JSON.parse(res.rawData)
+              console.log(userInfo)
               _this.setState({
                 userInfo,
               })
@@ -125,68 +120,52 @@ class Index extends Component {
 
   componentDidHide() { }
 
-  handleClose() {
-
+  onChange(e: string) {
+    this.setState({ value: e })
   }
-  onOpenBorrow() {
-    Taro.navigateTo({
-      url: '/pages/borrow/index'
-    })
+  onActionClick() {
+
   }
 
   render() {
-    const { isOpened, userInfo } = this.state
+    const { value } = this.state
+    const { book, comments } = this.props
     return (
-      <View className='personal'>
-        <View className="info">
-          <View className="avatar">
-            <AtAvatar customStyle={{ display: 'inline-block' }} image={userInfo.avatarUrl} circle size="large" />
+      <View className='bookComment'>
+        <View className="at-row bookComment-top">
+          <View className='at-col at-col-1'>
+            <Image src={book.src}/>
           </View>
-          <Text className="name">{userInfo.nickName}</Text>
+          <View className='at-col at-col-2'>
+            <Text>{book.name}</Text>
+          </View>
         </View>
-        <AtList>
-          <AtListItem
-            title='我的借阅'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'folder',
-            }}
-            onClick={this.onOpenBorrow}
+        <View className="bookComment-body">
+          <AtList>
+            <AtListItem >
+              {comments.map((item: IComment) => (
+                <AtCard
+                note='小Tips'
+                extra={item.time}
+                title={item.name}
+                thumb={item.icon || 'http://www.logoquan.com/upload/list/20180421/logoquan15259400209.PNG'}
+              >
+                <Text>{item.content}</Text>
+              </AtCard>
+              ))}
+            </AtListItem>
+          </AtList>
+        </View>
+        <View className="bookComment-bottom">
+          <AtSearchBar
+            showActionButton
+            placeholder="看了这么多可能你也有话想说"
+            actionName="评论"
+            value={value}
+            onChange={this.onChange}
+            onActionClick={this.onActionClick}
           />
-          <AtListItem
-            title='我的上架'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'menu',
-            }}
-          />
-          <AtListItem
-            title='账号设置'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'settings',
-            }}
-          />
-          <AtListItem
-            title='退出登录'
-            // note='描述信息'
-            arrow='right'
-            iconInfo={{
-              size: 20,
-              color: '#F05359',
-              value: 'arrow-right',
-            }}
-          />
-        </AtList>
-        <AtFloatLayout isOpened={isOpened} onClose={this.handleClose}>
-          <button open-type='getUserInfo' >获取授权</button>
-        </AtFloatLayout>
+        </View>
       </View>
     )
   }
