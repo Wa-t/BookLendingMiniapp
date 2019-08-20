@@ -1,11 +1,11 @@
-import { ComponentClass } from 'react'
+import { ComponentClass, version } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import { AtDivider } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
-import { queryBookDetail, queryRecord } from '../../actions/bookDetail'
+import { queryBookDetail, queryRecord, updataState } from '../../actions/bookDetail'
 import './index.less'
 
 // #region 书写注意
@@ -19,25 +19,31 @@ import './index.less'
 // #endregion
 
 type PageStateProps = {
-  personal: {
+  bookDetail: {
 
   }
 }
 
 type BookDetail = {
-  avatarUrl?: string
-  city?: string
-  country?: string
-  gender?: number
-  language?: string
-  nickName?: string
-  province?: string
+  id: string
+  bookName: string
+  author: string
+  Translator?: string
+  version: string
+  bookImage: string
+  type: string
+  score: string
+  introduction: string
+  isBorrow: boolean
+}
+
+type BookRecord = {
+
 }
 
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
+  bookInfo: BookDetail
+  dispatch: (arg: any) => any
 }
 
 type PageOwnProps = {}
@@ -55,9 +61,10 @@ interface Index {
 }
 
 
-@connect(({ personal }) => ({
-  personal
+@connect(({ bookDetail }) => ({
+  ...bookDetail
 }), (dispatch) => ({
+dispatch
 }))
 @autobind
 class Index extends Component {
@@ -85,6 +92,8 @@ class Index extends Component {
   }
 
   componentDidMount() {
+    const {dispatch} = this.props
+    dispatch(queryBookDetail())
     
   }
   componentWillUnmount() { }
@@ -99,6 +108,7 @@ class Index extends Component {
 
   render() {
     const {   } = this.state
+    const { bookInfo} = this.props;
     return (
       <View className='bookDetail'>
           <View className="at-row"> 
@@ -108,14 +118,15 @@ class Index extends Component {
               src="https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0cc74ef9a3773912db268361c8188675/9922720e0cf3d7ca810f3732f81fbe096a63a9fd.jpg" />
             </View>
             <View className="at-col at-col-7 info">
-              <View className="bookName">霍乱时期的爱情</View>
+              <View className="bookName">{bookInfo.bookName}</View>
               <View className="bookInfo">
-                <View className="infoList">作者：</View>       
-                <View className="infoList">分类：</View>
-                <View className="infoList">出版信息：</View>
-                <View className="infoList">类型：</View>
+              <View className="infoList">作者：{bookInfo.author}</View>
+              {bookInfo.Translator ? <View className="infoList">译者：{bookInfo.Translator}</View> : null}   
+                    
+                <View className="infoList">分类：{bookInfo.type}</View>
+                <View className="infoList">出版信息：{bookInfo.version}</View>
                 <View >
-                  评分：
+                  评分：{bookInfo.score}
                 </View>
               </View>
             </View>

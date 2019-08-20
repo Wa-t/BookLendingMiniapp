@@ -2,15 +2,18 @@ import { QUERY_DETAIL,QUERY_RECORD, UPDATE_STATE } from '../constants/bookDetail
 import request from '../utils/request';
 
 
-export const queryBookDetail = () => {
+export const queryBookDetail = (data = {}) => {
   return dispatch => {
-    request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', {
-    }).then(res => {
+    request(
+      'https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/queryBookDetail', 
+      {...data},
+      'POST'
+    ).then(res => {
         const { success, data } = res.data;
         if (success) {
             dispatch({
               type: QUERY_DETAIL,
-              data,
+              payload: data.bookInfo || {},
             })
         }
     }).catch(e => {
