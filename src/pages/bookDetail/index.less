@@ -1,17 +1,27 @@
-.personal {
-  flex-direction: column;
-  width: 100%;
-}
-.info{
-  width: 100%;
-  height: 350px;
-  text-align: center;
-  background: #F05359
-}
-.avatar {
-  padding-top: 50px;
-}
-.name {
-  position: relative;
-  top: 36px
+.bookDetail {
+  background-color: #fbf8f8;
+  padding: 12px 12px 0;
+  .bookInfoLeft {
+    background-color: aqua;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .info{
+    border: 1px solid #5a5555;
+    padding: 12px 20px ;
+    margin-right: 50px;
+    // box-sizing: border-box;
+    display:inline-block;
+    .bookName {
+      height:40px;
+      line-height: 40px;
+      font-size: 35px;
+      margin-bottom: 12px;
+    }
+    .infoList{
+      height: 50px;
+      line-height: 50px;
+    }
+  }
 }

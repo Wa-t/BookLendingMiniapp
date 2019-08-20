@@ -24,9 +24,9 @@ type Book = {
 
 type PageStateProps = {
   bookStore: {
-    bookList: Array<Book>;
+    bookList: Book[];
   },
-  dispatch
+  dispatch: (arg: any) => any
 }
 
 type PageDispatchProps = {
@@ -88,7 +88,6 @@ class Index extends Component {
 
   handleClick(tabKey) {
     const { dispatch } = this.props;
-    // console.log(this.props.dispatch)
     this.setState({
       current: tabKey,
     })
@@ -96,11 +95,8 @@ class Index extends Component {
   }
 
   renderBookList() {
-    console.log('-----------')
-
     const { bookStore } = this.props
     const { bookList } = bookStore
-    // const filterBookList =bookList.map()
     return (
       <AtGrid data={bookList} />
     )

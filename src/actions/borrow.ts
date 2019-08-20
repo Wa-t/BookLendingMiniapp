@@ -11,7 +11,7 @@ export const updataState = (borrowList) => {
 // 异步的action
 export function queryBorrowList(params: any) {
     return dispatch => {
-        request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', {
+        request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/queryBorrowList', {
         }).then(res => {
             const { success, data } = res.data;
             if (success) {

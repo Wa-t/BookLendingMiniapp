@@ -97,13 +97,10 @@ class Index extends Component {
     const _this = this
     Taro.getSetting({
       success(res) {
-        console.log(res.authSetting['scope.userInfo'])
         if (res.authSetting['scope.userInfo']) {
           Taro.getUserInfo({
             success: function (res) {
-              console.log(res)
               const userInfo = JSON.parse(res.rawData)
-              console.log(userInfo)
               _this.setState({
                 userInfo,
               })
@@ -160,7 +157,6 @@ class Index extends Component {
           />
           <AtListItem
             title='我的上架'
-            // note='描述信息'
             arrow='right'
             iconInfo={{
               size: 20,
@@ -170,7 +166,6 @@ class Index extends Component {
           />
           <AtListItem
             title='账号设置'
-            // note='描述信息'
             arrow='right'
             iconInfo={{
               size: 20,
