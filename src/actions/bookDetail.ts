@@ -21,15 +21,17 @@ export const queryBookDetail = (data = {}) => {
     });
 }
 }
-export const queryRecord = () => {
+export const queryRecord = (data = {}) => {
   return dispatch => {
-    request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', {
-    }).then(res => {
+    request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/queryBorrowRecord',
+    {...data},
+    'POST'
+    ).then(res => {
         const { success, data } = res.data;
         if (success) {
             dispatch({
               type: QUERY_RECORD,
-              data,
+              payload: data.dataList || [],
             })
         }
     }).catch(e => {

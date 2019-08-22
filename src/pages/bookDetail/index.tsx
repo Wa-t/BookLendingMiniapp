@@ -1,7 +1,7 @@
 import { ComponentClass, version } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { AtDivider } from 'taro-ui';
+import { AtDivider, AtSegmentedControl } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
@@ -38,19 +38,21 @@ type BookDetail = {
 }
 
 type BookRecord = {
-
+  id: string,
+  borrowDate: string,
+  borrower: string,
 }
 
 type PageDispatchProps = {
   bookInfo: BookDetail
+  bookRecord: [BookRecord]
   dispatch: (arg: any) => any
 }
 
 type PageOwnProps = {}
 
 type PageState = {
-  isOpened: boolean
-  userInfo: UserInfo,
+  current: number
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -64,7 +66,7 @@ interface Index {
 @connect(({ bookDetail }) => ({
   ...bookDetail
 }), (dispatch) => ({
-dispatch
+  dispatch
 }))
 @autobind
 class Index extends Component {
@@ -83,8 +85,7 @@ class Index extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isOpened: false,
-      userInfo: {}
+      current: 0,
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -92,9 +93,9 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    const {dispatch} = this.props
+    const { dispatch } = this.props
     dispatch(queryBookDetail())
-    
+    dispatch(queryRecord())
   }
   componentWillUnmount() { }
 
@@ -105,39 +106,52 @@ class Index extends Component {
   handleClose() {
 
   }
-
+  handleSwitch(value) {
+    this.setState({
+      current: value
+    })
+  }
   render() {
-    const {   } = this.state
-    const { bookInfo} = this.props;
+    const { } = this.state
+    const { bookInfo } = this.props;
     return (
       <View className='bookDetail'>
-          <View className="at-row"> 
-            <View className="at-col at-col-5 bookInfoLeft">
-              <image 
+        <View className="at-row">
+          <View className="at-col at-col-5 bookInfoLeft">
+            <image
               style="width: 100px; height: 100px"
               src="https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/image/h%3D300/sign=0cc74ef9a3773912db268361c8188675/9922720e0cf3d7ca810f3732f81fbe096a63a9fd.jpg" />
-            </View>
-            <View className="at-col at-col-7 info">
-              <View className="bookName">{bookInfo.bookName}</View>
-              <View className="bookInfo">
+          </View>
+          <View className="at-col at-col-7 info">
+            <View className="bookName">{bookInfo.bookName}</View>
+            <View className="bookInfo">
               <View className="infoList">作者：{bookInfo.author}</View>
-              {bookInfo.Translator ? <View className="infoList">译者：{bookInfo.Translator}</View> : null}   
-                    
-                <View className="infoList">分类：{bookInfo.type}</View>
-                <View className="infoList">出版信息：{bookInfo.version}</View>
-                <View >
-                  评分：{bookInfo.score}
-                </View>
+              {bookInfo.Translator ? <View className="infoList">译者：{bookInfo.Translator}</View> : null}
+
+              <View className="infoList">分类：{bookInfo.type}</View>
+              <View className="infoList">出版信息：{bookInfo.version}</View>
+              <View >
+                评分：{bookInfo.score}
               </View>
             </View>
           </View>
-          <AtDivider height="30"/>
-          <View>
-            <View className="title">内容简介</View>
+        </View>
+        <AtDivider height="30" />
+        <View>
+          <View className="title">内容简介</View>
+          <View className="introduction">
+            {bookInfo.introduction}
           </View>
-          <AtDivider height="30" />
-
-          <View>借阅记录</View>
+        </View>
+        <AtDivider height="30" />
+        <View className="title">借阅记录</View>
+        <AtSegmentedControl
+          onClick={this.handleSwitch}
+          selectedColor='#FF4949'
+          fontSize='30'
+          current={this.state.current}
+          values={['近七天', '近一月', '近三月']}
+        />
 
       </View>
     )
