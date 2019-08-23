@@ -48,9 +48,8 @@ interface Index {
   state: PageState;
 }
 
-@connect(({ bookStore }, dispatch) => ({
+@connect(({ bookStore }) => ({
   bookStore,
-  dispatch,
 }))
 @autobind
 class Index extends Component {
@@ -103,6 +102,7 @@ class Index extends Component {
   }
 
   render() {
+    console.log(this.props)
     const tabList = [{ title: '综合' }, { title: '借阅最多' }, { title: '最新上架' }]
     return (
       <AtTabs current={this.state.current} tabList={tabList} onClick={this.handleClick}>
