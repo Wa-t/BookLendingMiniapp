@@ -5,7 +5,7 @@ import { AtDivider, AtSegmentedControl } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
-import { queryBookDetail, queryRecord, updataState } from '../../actions/bookDetail'
+import * as actionCreater from '../../actions/bookDetail'
 import './index.less'
 
 // #region 书写注意
@@ -46,7 +46,8 @@ type BookRecord = {
 type PageDispatchProps = {
   bookInfo: BookDetail
   bookRecord: [BookRecord]
-  dispatch: (arg: any) => any
+  queryBookDetail: (any) => void
+  queryRecord: (any) => void
 }
 
 type PageOwnProps = {}
@@ -65,9 +66,7 @@ interface Index {
 
 @connect(({ bookDetail }) => ({
   ...bookDetail
-}), (dispatch) => ({
-  dispatch
-}))
+}), actionCreater)
 @autobind
 class Index extends Component {
 
@@ -93,12 +92,12 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    const { dispatch } = this.props
-    dispatch(queryBookDetail())
-    dispatch(queryRecord())
+    const { queryBookDetail, queryRecord } = this.props
+    queryBookDetail({})
+    queryRecord({})
   }
   componentWillUnmount() { }
-
+  // 
   componentDidShow() { }
 
   componentDidHide() { }
@@ -106,10 +105,26 @@ class Index extends Component {
   handleClose() {
 
   }
+
   handleSwitch(value) {
     this.setState({
       current: value
     })
+    this.props.queryRecord({})
+  }
+
+  renderRecord() {
+    const { bookRecord } = this.props;
+    return bookRecord.map((item, i) => (
+      <View className="at-row record" key={i}>
+        <View className="at-col at-col-6">
+          {item.borrower}
+        </View>
+        <View className="at-col at-col-6">
+          {item.borrowDate}
+        </View>
+      </View>
+    ))
   }
   render() {
     const { } = this.state
@@ -144,15 +159,22 @@ class Index extends Component {
           </View>
         </View>
         <AtDivider height="30" />
-        <View className="title">借阅记录</View>
-        <AtSegmentedControl
-          onClick={this.handleSwitch}
-          selectedColor='#FF4949'
-          fontSize='30'
-          current={this.state.current}
-          values={['近七天', '近一月', '近三月']}
-        />
-
+        <View>
+          <View className="title">借阅记录</View>
+          <AtSegmentedControl
+            onClick={this.handleSwitch}
+            selectedColor='#FF4949'
+            fontSize='30'
+            current={this.state.current}
+            values={['近七天', '近一月', '近三月']}
+          />
+          <View style={{ marginTop: '10px', marginBottom: '120rpx' }}>
+            {this.renderRecord()}
+          </View>
+        </View>
+        <View className="fixedFooter">
+          button
+        </View>
       </View>
     )
   }
