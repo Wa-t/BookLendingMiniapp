@@ -49,9 +49,8 @@ interface Index {
   state: PageState;
 }
 
-@connect(({ borrow }, dispatch) => ({
+@connect(({ borrow }) => ({
   borrow,
-  dispatch,
 }))
 @autobind
 class Index extends Component {
