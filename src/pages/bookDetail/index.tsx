@@ -1,11 +1,11 @@
 import { ComponentClass, version } from 'react'
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, { Component, Config, showModal, hideToast, showToast } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { AtDivider, AtSegmentedControl } from 'taro-ui';
+import { AtDivider, AtSegmentedControl, AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtToast } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
-import { queryBookDetail, queryRecord, updataState } from '../../actions/bookDetail'
+import * as actionCreater from '../../actions/bookDetail'
 import './index.less'
 
 // #region 书写注意
@@ -46,13 +46,18 @@ type BookRecord = {
 type PageDispatchProps = {
   bookInfo: BookDetail
   bookRecord: [BookRecord]
-  dispatch: (arg: any) => any
+  queryBookDetail: (any) => void
+  queryRecord: (any) => void
 }
 
 type PageOwnProps = {}
 
 type PageState = {
   current: number
+  showModal: boolean
+  showToast: boolean
+  toastText: string
+  toastStatus: string
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -65,9 +70,7 @@ interface Index {
 
 @connect(({ bookDetail }) => ({
   ...bookDetail
-}), (dispatch) => ({
-  dispatch
-}))
+}), actionCreater)
 @autobind
 class Index extends Component {
 
@@ -86,30 +89,78 @@ class Index extends Component {
     super(props)
     this.state = {
       current: 0,
+      showModal: false,
+      showToast: false,
+      toastStatus: '',
     }
   }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
 
+
   componentDidMount() {
-    const { dispatch } = this.props
-    dispatch(queryBookDetail())
-    dispatch(queryRecord())
+    const { queryBookDetail, queryRecord } = this.props
+    queryBookDetail({})
+    queryRecord({})
   }
   componentWillUnmount() { }
-
+  // 
   componentDidShow() { }
 
   componentDidHide() { }
 
-  handleClose() {
+  onBorrow() {
+    this.setState({
+      showModal: true
+    })
+  }
 
+  onCancel() {
+    console.log('2424')
+    this.setState({
+      showModal: false
+    })
+  }
+
+  onConfirm() {
+    this.setState({
+      showModal: false
+    })
   }
   handleSwitch(value) {
     this.setState({
       current: value
     })
+    this.props.queryRecord({})
+  }
+  showError() {
+    this.setState({
+      toastStatus: 'error',
+      toastText: '操作失败',
+      showToast: true,
+    })
+  }
+
+  showSuccess() {
+    this.setState({
+      toastStatus: 'error',
+      toastText: '操作失败',
+      showToast: true,
+    })
+  }
+  renderRecord() {
+    const { bookRecord } = this.props;
+    return bookRecord.map((item, i) => (
+      <View className="at-row record" key={i}>
+        <View className="at-col at-col-6">
+          {item.borrower}
+        </View>
+        <View className="at-col at-col-6">
+          {item.borrowDate}
+        </View>
+      </View>
+    ))
   }
   render() {
     const { } = this.state
@@ -144,15 +195,40 @@ class Index extends Component {
           </View>
         </View>
         <AtDivider height="30" />
-        <View className="title">借阅记录</View>
-        <AtSegmentedControl
-          onClick={this.handleSwitch}
-          selectedColor='#FF4949'
-          fontSize='30'
-          current={this.state.current}
-          values={['近七天', '近一月', '近三月']}
-        />
-
+        <View>
+          <View className="title">借阅记录</View>
+          <AtSegmentedControl
+            onClick={this.handleSwitch}
+            selectedColor='#FF4949'
+            fontSize='30'
+            current={this.state.current}
+            values={['近七天', '近一月', '近三月']}
+          />
+          <View style={{ marginTop: '10px', marginBottom: '120rpx' }}>
+            {this.renderRecord()}
+          </View>
+        </View>
+        <View className="fixedFooter at-row">
+          <View className="at-col at-col-6">
+            <AtButton type="secondary" className="footerButton">查看笔记</AtButton>
+          </View>
+          <View className="at-col at-col-6">
+            <AtButton type="primary" className="footerButton" onClick={this.onBorrow}>借阅</AtButton>
+          </View>
+        </View>
+        <AtModal isOpened={this.state.showModal}>
+          <AtModalHeader>确认借阅本书籍吗？</AtModalHeader>
+          <AtModalContent>
+            <View className="modalContent">书籍名称：{bookInfo.bookName}</View>
+            <View className="modalContent" >借阅时间：2019-08-05</View>
+            <View className="modalContent">应还时间：2010-09-05</View>
+          </AtModalContent>
+          <AtModalAction>
+            <button><View onClick={this.onCancel}>取消</View></button>
+            <button><View onClick={this.onConfirm}>确定</View></button>
+          </AtModalAction>
+        </AtModal>
+        <AtToast isOpened={this.state.showToast} text={this.state.toastText} status={this.state.toastStatus}></AtToast>
       </View>
     )
   }
