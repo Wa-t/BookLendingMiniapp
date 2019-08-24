@@ -147,7 +147,7 @@ class Index extends Component {
             {bookDetail.title}
           </View>
           <View className='at-article__info'>
-            {bookDetail.author && bookDetail.author.map((item: any)=>item.name)}
+            {bookDetail.author && bookDetail.author.map((item: any) => item.name)}
           </View>
           <View className='at-article__info'>
             发版日期：{bookDetail.published} 发版单位：{bookDetail.publisher}

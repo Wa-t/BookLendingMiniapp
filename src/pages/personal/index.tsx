@@ -1,7 +1,7 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { AtAvatar, AtList, AtListItem, AtFloatLayout } from 'taro-ui';
+import { AtAvatar, AtList, AtListItem, AtButton } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
@@ -43,7 +43,7 @@ type PageDispatchProps = {
 type PageOwnProps = {}
 
 type PageState = {
-  isOpened: boolean
+  isAuthorize: boolean
   userInfo: UserInfo,
 }
 
@@ -85,7 +85,7 @@ class Index extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isOpened: false,
+      isAuthorize: true,
       userInfo: {}
     }
   }
@@ -94,27 +94,21 @@ class Index extends Component {
   }
 
   componentDidMount() {
+    console.log('componentDidMount')
     const _this = this
     Taro.getSetting({
       success(res) {
         if (res.authSetting['scope.userInfo']) {
-          Taro.getUserInfo({
-            success: function (res) {
-              const userInfo = JSON.parse(res.rawData)
-              _this.setState({
-                userInfo,
-              })
-            }
-          })
+          _this.getUserInfo()
         } else {
-          _this.setState({ isOpened: true })
-          Taro.authorize({
-            scope: 'scope.userInfo',
-          }).then(res => {
-            console.log(res, 'authorize')
-          }).catch(e => {
-            console.log(e, 'authorize')
-          })
+          _this.setState({ isAuthorize: false })
+          // Taro.authorize({
+          //   scope: 'scope.userInfo',
+          // }).then(res => {
+          //   console.log(res, 'authorize')
+          // }).catch(e => {
+          //   console.log(e, 'authorize')
+          // })
         }
       }
     })
@@ -125,8 +119,17 @@ class Index extends Component {
 
   componentDidHide() { }
 
-  handleClose() {
-
+  getUserInfo() {
+    const _this = this
+    Taro.getUserInfo({
+      success: function (res) {
+        const userInfo = JSON.parse(res.rawData)
+        _this.setState({
+          isAuthorize: true,
+          userInfo,
+        })
+      }
+    })
   }
   onOpenBorrow() {
     Taro.navigateTo({
@@ -135,14 +138,37 @@ class Index extends Component {
   }
 
   render() {
-    const { isOpened, userInfo } = this.state
+    const { isAuthorize, userInfo } = this.state
+    console.log(isAuthorize)
     return (
       <View className='personal'>
         <View className="info">
           <View className="avatar">
             <AtAvatar customStyle={{ display: 'inline-block' }} image={userInfo.avatarUrl} circle size="large" />
           </View>
-          <Text className="name">{userInfo.nickName}</Text>
+          <Text className="name">
+            {
+              isAuthorize ? userInfo.nickName : ''
+            }
+          </Text>
+          {
+            !isAuthorize ?
+              <AtButton
+                customStyle={{
+                  color: '#fff',
+                  backgroundColor: '#EEC900',
+                  width: '100px',
+                  height: '32px',
+                  lineHeight: '32px',
+                  borderRadius: '16px',
+                  border: 'none'
+                }}
+                openType="getUserInfo"
+                onGetUserInfo={this.getUserInfo}
+              >
+                授权登陆
+              </AtButton> : ''
+          }
         </View>
         <AtList>
           <AtListItem
@@ -184,10 +210,7 @@ class Index extends Component {
             }}
           />
         </AtList>
-        <AtFloatLayout isOpened={isOpened} onClose={this.handleClose}>
-          <button open-type='getUserInfo' >获取授权</button>
-        </AtFloatLayout>
-      </View>
+      </View >
     )
   }
 }
