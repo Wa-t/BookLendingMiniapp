@@ -1,7 +1,7 @@
 import { ComponentClass, version } from 'react'
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, { Component, Config, showModal, hideToast, showToast } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
-import { AtDivider, AtSegmentedControl } from 'taro-ui';
+import { AtDivider, AtSegmentedControl, AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtToast } from 'taro-ui';
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
 
@@ -54,6 +54,10 @@ type PageOwnProps = {}
 
 type PageState = {
   current: number
+  showModal: boolean
+  showToast: boolean
+  toastText: string
+  toastStatus: string
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -85,11 +89,15 @@ class Index extends Component {
     super(props)
     this.state = {
       current: 0,
+      showModal: false,
+      showToast: false,
+      toastStatus: '',
     }
   }
   componentWillReceiveProps(nextProps) {
     console.log(this.props, nextProps)
   }
+
 
   componentDidMount() {
     const { queryBookDetail, queryRecord } = this.props
@@ -102,17 +110,45 @@ class Index extends Component {
 
   componentDidHide() { }
 
-  handleClose() {
-
+  onBorrow() {
+    this.setState({
+      showModal: true
+    })
   }
 
+  onCancel() {
+    console.log('2424')
+    this.setState({
+      showModal: false
+    })
+  }
+
+  onConfirm() {
+    this.setState({
+      showModal: false
+    })
+  }
   handleSwitch(value) {
     this.setState({
       current: value
     })
     this.props.queryRecord({})
   }
+  showError() {
+    this.setState({
+      toastStatus: 'error',
+      toastText: '操作失败',
+      showToast: true,
+    })
+  }
 
+  showSuccess() {
+    this.setState({
+      toastStatus: 'error',
+      toastText: '操作失败',
+      showToast: true,
+    })
+  }
   renderRecord() {
     const { bookRecord } = this.props;
     return bookRecord.map((item, i) => (
@@ -172,9 +208,27 @@ class Index extends Component {
             {this.renderRecord()}
           </View>
         </View>
-        <View className="fixedFooter">
-          button
+        <View className="fixedFooter at-row">
+          <View className="at-col at-col-6">
+            <AtButton type="secondary" className="footerButton">查看笔记</AtButton>
+          </View>
+          <View className="at-col at-col-6">
+            <AtButton type="primary" className="footerButton" onClick={this.onBorrow}>借阅</AtButton>
+          </View>
         </View>
+        <AtModal isOpened={this.state.showModal}>
+          <AtModalHeader>确认借阅本书籍吗？</AtModalHeader>
+          <AtModalContent>
+            <View className="modalContent">书籍名称：{bookInfo.bookName}</View>
+            <View className="modalContent" >借阅时间：2019-08-05</View>
+            <View className="modalContent">应还时间：2010-09-05</View>
+          </AtModalContent>
+          <AtModalAction>
+            <button><View onClick={this.onCancel}>取消</View></button>
+            <button><View onClick={this.onConfirm}>确定</View></button>
+          </AtModalAction>
+        </AtModal>
+        <AtToast isOpened={this.state.showToast} text={this.state.toastText} status={this.state.toastStatus}></AtToast>
       </View>
     )
   }
