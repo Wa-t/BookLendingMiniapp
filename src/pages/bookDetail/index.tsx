@@ -57,7 +57,8 @@ type PageState = {
   showModal: boolean
   showToast: boolean
   toastText: string
-  toastStatus: string
+  toastStatus: "loading" | "success" | "error" | undefined
+  isBorrow: boolean
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -91,17 +92,21 @@ class Index extends Component {
       current: 0,
       showModal: false,
       showToast: false,
-      toastStatus: '',
+      toastStatus: 'loading',
+      toastText: '',
+      isBorrow: props.bookInfo.isBorrow,
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps)
+    this.setState
   }
 
-
+  componentWillMount() {
+    this.props.queryBookDetail({ ...this.$router.params })
+  }
   componentDidMount() {
-    const { queryBookDetail, queryRecord } = this.props
-    queryBookDetail({})
+    const { queryRecord } = this.props
+    // queryBookDetail({})
     queryRecord({})
   }
   componentWillUnmount() { }
@@ -124,9 +129,16 @@ class Index extends Component {
   }
 
   onConfirm() {
-    this.setState({
-      showModal: false
-    })
+    const { isBorrow } = this.state;
+    this.onShowToast()
+    setTimeout(() => {
+      this.onShowToast(isBorrow ? '归还成功' : '借阅成功', 'success', 2000)
+      this.setState({
+        isBorrow: !isBorrow,
+        showModal: false
+      })
+      // 
+    }, 2000)
   }
   handleSwitch(value) {
     this.setState({
@@ -134,21 +146,31 @@ class Index extends Component {
     })
     this.props.queryRecord({})
   }
-  showError() {
+  onShowToast(text = "", status = '', duration = 0) {
     this.setState({
-      toastStatus: 'error',
-      toastText: '操作失败',
+      toastStatus: status || 'loading',
+      toastText: text || '',
       showToast: true,
+    })
+    duration && setTimeout(() => {
+      this.onHideToast()
+    }, duration)
+  }
+  onViewNotes() {
+    const { bookInfo } = this.props;
+    Taro.navigateTo({
+      url: `pages/bookComment/index?id=${bookInfo.id}`,
+    })
+  }
+  onHideToast() {
+    this.setState({
+      showToast: false,
+      toastStatus: '',
+      toastText: '',
+      duration: 0
     })
   }
 
-  showSuccess() {
-    this.setState({
-      toastStatus: 'error',
-      toastText: '操作失败',
-      showToast: true,
-    })
-  }
   renderRecord() {
     const { bookRecord } = this.props;
     return bookRecord.map((item, i) => (
@@ -163,7 +185,7 @@ class Index extends Component {
     ))
   }
   render() {
-    const { } = this.state
+    const { isBorrow } = this.state
     const { bookInfo } = this.props;
     return (
       <View className='bookDetail'>
@@ -200,7 +222,7 @@ class Index extends Component {
           <AtSegmentedControl
             onClick={this.handleSwitch}
             selectedColor='#FF4949'
-            fontSize='30'
+            fontSize={30}
             current={this.state.current}
             values={['近七天', '近一月', '近三月']}
           />
@@ -210,14 +232,14 @@ class Index extends Component {
         </View>
         <View className="fixedFooter at-row">
           <View className="at-col at-col-6">
-            <AtButton type="secondary" className="footerButton">查看笔记</AtButton>
+            <AtButton type="secondary" onClick={this.onViewNotes} className="footerButton">查看笔记</AtButton>
           </View>
           <View className="at-col at-col-6">
-            <AtButton type="primary" className="footerButton" onClick={this.onBorrow}>借阅</AtButton>
+            <AtButton type="primary" className="footerButton" onClick={this.onBorrow}>{isBorrow ? '还书' : '借阅'}</AtButton>
           </View>
         </View>
         <AtModal isOpened={this.state.showModal}>
-          <AtModalHeader>确认借阅本书籍吗？</AtModalHeader>
+          <AtModalHeader>确认{isBorrow ? '归还' : '借阅'}本书籍吗？</AtModalHeader>
           <AtModalContent>
             <View className="modalContent">书籍名称：{bookInfo.bookName}</View>
             <View className="modalContent" >借阅时间：2019-08-05</View>
@@ -228,7 +250,7 @@ class Index extends Component {
             <button><View onClick={this.onConfirm}>确定</View></button>
           </AtModalAction>
         </AtModal>
-        <AtToast isOpened={this.state.showToast} text={this.state.toastText} status={this.state.toastStatus}></AtToast>
+        <AtToast isOpened={this.state.showToast} duration={0} text={this.state.toastText} status={this.state.toastStatus}></AtToast>
       </View>
     )
   }
