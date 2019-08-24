@@ -97,10 +97,15 @@ class Index extends Component {
     const { bookStore } = this.props
     const { bookList } = bookStore
     return (
-      <AtGrid data={bookList} />
+      <AtGrid data={bookList} onClick={this.onOpenDetailPage} />
     )
   }
-
+  onOpenDetailPage(item) {
+    console.log(item)
+    Taro.navigateTo({
+      url: `/pages/bookDetail/index?bookId=${item.id}`
+    })
+  }
   render() {
     console.log(this.props)
     const tabList = [{ title: '综合' }, { title: '借阅最多' }, { title: '最新上架' }]

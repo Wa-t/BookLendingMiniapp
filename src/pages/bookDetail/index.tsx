@@ -100,8 +100,9 @@ class Index extends Component {
 
 
   componentDidMount() {
+    const { bookId } = this.$router.params
     const { queryBookDetail, queryRecord } = this.props
-    queryBookDetail({})
+    queryBookDetail({ bookId })
     queryRecord({})
   }
   componentWillUnmount() { }
