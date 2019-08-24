@@ -157,7 +157,7 @@ class Index extends Component {
   onViewNotes() {
     const { bookInfo } = this.props;
     Taro.navigateTo({
-      url: `pages/bookComment/index?id=${bookInfo.id}`,
+      url: `../bookComment/index?id=${bookInfo.id}`,
     })
   }
   onHideToast() {

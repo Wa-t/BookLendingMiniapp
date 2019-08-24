@@ -29,7 +29,7 @@ class App extends Component {
       'pages/index/index',
       'pages/bookDetail/index',
       'pages/borrow/index',
-      // 'pages/personal/index'
+      // 'pages/bookComment/index',
     ],
     window: {
       backgroundTextStyle: 'light',
