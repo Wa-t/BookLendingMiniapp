@@ -29,6 +29,8 @@ class App extends Component {
       'pages/index/index',
       'pages/bookDetail/index',
       'pages/borrow/index',
+      'pages/bookShelf/index',
+
       // 'pages/bookComment/index',
     ],
     window: {

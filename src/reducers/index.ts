@@ -4,6 +4,8 @@ import bookStore from './bookStore'
 import borrow from './borrow'
 import bookDetail from './bookDetail'
 import bookComments from './bookComments'
+import bookShelf from './bookShelf'
+
 
 export default combineReducers({
   counter,
@@ -11,4 +13,5 @@ export default combineReducers({
   borrow,
   bookDetail,
   bookComments,
+  bookShelf,
 })

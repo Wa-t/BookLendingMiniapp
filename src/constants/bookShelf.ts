@@ -1,0 +1,1 @@
+export const UPDATE_STATE = 'BOOKSHELF-UPDATE_STATE'
