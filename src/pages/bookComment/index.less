@@ -2,17 +2,32 @@
   .bookComment-top {
     position: fixed;
     top: 0;
-    height: 100px;
+    height: 300px;
+    background-color: #fff;
+    z-index: 2;
+    image {
+      width: 80%;
+      height: 260px;
+      padding: 20px 10%;
+      display: inline-block;
+    }
+    .book-name {
+      display: inline-block;
+      height: 300px;
+      padding: 20px 10%;
+      text-align: center;
+    }
   }
   .bookComment-body {
-    height: 100%;
-    padding: 100px 0 50px 0;
+    padding: 300px 0 110px 0;
     overflow-x: hidden;
     overflow-y: auto;
   }
   .bookComment-bottom {
     position: fixed;
+    width: 100%;
     bottom: 0;
-    height: 50px;
+    height: 100px;
+    background-color: #fff;
   }
 }

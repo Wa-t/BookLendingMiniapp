@@ -1,10 +1,10 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Text, Image } from '@tarojs/components'
-import { AtCard, AtList, AtListItem, AtSearchBar  } from 'taro-ui';
+import { AtCard, AtSearchBar } from 'taro-ui'
 import { autobind } from 'core-decorators'
 import { connect } from '@tarojs/redux'
-
+import { queryBookCommments } from '../../../src/actions/bookComments'
 import './index.less'
 
 // #region 书写注意
@@ -42,9 +42,11 @@ type PageDispatchProps = {
   add: () => void
   dec: () => void
   asyncAdd: () => any
+  dispatch: (any) => void
 }
 
-type PageOwnProps = {}
+type PageOwnProps = {
+}
 
 type PageState = {
   value: string,
@@ -58,9 +60,7 @@ interface Index {
 }
 
 
-@connect((bookComments) => bookComments, (dispatch) => ({
-  dispatch,
-}))
+@connect(({ bookComments }) => bookComments)
 @autobind
 class Index extends Component {
 
@@ -86,33 +86,38 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    const _this = this
-    Taro.getSetting({
-      success(res) {
-        console.log(res.authSetting['scope.userInfo'])
-        if (res.authSetting['scope.userInfo']) {
-          Taro.getUserInfo({
-            success: function (res) {
-              console.log(res)
-              const userInfo = JSON.parse(res.rawData)
-              console.log(userInfo)
-              _this.setState({
-                userInfo,
-              })
-            }
-          })
-        } else {
-          _this.setState({ isOpened: true })
-          Taro.authorize({
-            scope: 'scope.userInfo',
-          }).then(res => {
-            console.log(res, 'authorize')
-          }).catch(e => {
-            console.log(e, 'authorize')
-          })
-        }
-      }
-    })
+    const { id } = this.$router.params
+    const { dispatch } = this.props;
+    if (id) {
+      dispatch(queryBookCommments(id))
+    }
+    // const _this = this
+    // Taro.getSetting({
+    //   success(res) {
+    //     console.log(res.authSetting['scope.userInfo'])
+    //     if (res.authSetting['scope.userInfo']) {
+    //       Taro.getUserInfo({
+    //         success: function (res) {
+    //           console.log(res)
+    //           const userInfo = JSON.parse(res.rawData)
+    //           console.log(userInfo)
+    //           _this.setState({
+    //             userInfo,
+    //           })
+    //         }
+    //       })
+    //     } else {
+    //       _this.setState({ isOpened: true })
+    //       Taro.authorize({
+    //         scope: 'scope.userInfo',
+    //       }).then(res => {
+    //         console.log(res, 'authorize')
+    //       }).catch(e => {
+    //         console.log(e, 'authorize')
+    //       })
+    //     }
+    //   }
+    // })
   }
   componentWillUnmount() { }
 
@@ -130,31 +135,28 @@ class Index extends Component {
   render() {
     const { value } = this.state
     const { book, comments } = this.props
+    console.log(comments)
     return (
       <View className='bookComment'>
         <View className="at-row bookComment-top">
-          <View className='at-col at-col-1'>
-            <Image src={book.src}/>
+          <View className='at-col at-col-6'>
+            <Image src={book.src} />
           </View>
-          <View className='at-col at-col-2'>
+          <View className='at-col at-col-6 book-name'>
             <Text>{book.name}</Text>
           </View>
         </View>
         <View className="bookComment-body">
-          <AtList>
-            <AtListItem >
-              {comments.map((item: IComment) => (
-                <AtCard
-                note='小Tips'
-                extra={item.time}
-                title={item.name}
-                thumb={item.icon || 'http://www.logoquan.com/upload/list/20180421/logoquan15259400209.PNG'}
-              >
-                <Text>{item.content}</Text>
-              </AtCard>
-              ))}
-            </AtListItem>
-          </AtList>
+          {comments.map((item: IComment) => (
+            <AtCard
+              note={`赞 ${item.zan}`}
+              extra={item.time}
+              title={item.name}
+              thumb={item.icon || 'http://www.logoquan.com/upload/list/20180421/logoquan15259400209.PNG'}
+            >
+              <Text>{item.content}</Text>
+            </AtCard>
+          ))}
         </View>
         <View className="bookComment-bottom">
           <AtSearchBar

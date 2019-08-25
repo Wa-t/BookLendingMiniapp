@@ -10,15 +10,17 @@ export const updataState = (bookCommments) => {
 
 // 异步的action
 export function queryBookCommments(params: any) {
+    console.log(params)
     return dispatch => {
-        request('https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getBookList?mode=all', {
-        }).then(res => {
-            const { success, data } = res.data;
-            if (success) {
-                dispatch(updataState(data.list))
-            }
-        }).catch(e => {
-            console.log(e)
-        });
+        request(`https://easy-mock.com/mock/5d4bee8bf2af1a3fa3b31cb7/wa-t/BookLendingMiniapp/getAllComments?id=${params}`)
+            .then(res => {
+                console.log('action触发了', res)
+                const { success, data } = res.data;
+                if (success) {
+                    dispatch(updataState({ book: data.book, comments: data.comments, }))
+                }
+            }).catch(e => {
+                console.log(e)
+            });
     }
 }
