@@ -1,11 +1,10 @@
 import { ComponentClass } from 'react'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { AtSwipeAction, AtList, AtListItem } from 'taro-ui'
+import { AtRadio, AtButton } from 'taro-ui'
 import { connect } from '@tarojs/redux'
 import { autobind } from 'core-decorators'
-import { updataState, queryBorrowList } from '../../actions/borrow'
-
+import { queryShelfList } from '../../actions/bookShelf';
 import './index.less'
 
 // #region 书写注意
@@ -18,28 +17,25 @@ import './index.less'
 //
 // #endregion
 
-type Book = {
+type BookItem = {
   bookId: string
   bookName: string
-  shouldReturnDate: string
-  borrowDate: string
+  canLowershelf: boolean
+  shelfDate: string
 }
 
 type PageStateProps = {
-  borrow: {
-    borrowList: Array<Book>;
-  },
-  dispatch: (arg: any) => any
+  shelfList: Array<BookItem>;
 }
 
 type PageDispatchProps = {
-
+  dispatch: (any) => any
 }
 
 type PageOwnProps = {}
 
 type PageState = {
-  current: number
+  value: string
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -49,8 +45,8 @@ interface Index {
   state: PageState;
 }
 
-@connect(({ borrow }) => ({
-  borrow,
+@connect(({ bookShelf }) => ({
+  ...bookShelf,
 }))
 @autobind
 class Index extends Component {
@@ -63,19 +59,19 @@ class Index extends Component {
  * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
  */
   config: Config = {
-    navigationBarTitleText: '我的借阅'
+    navigationBarTitleText: '我的上架'
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      current: 0
+      value: '',
     }
   }
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(queryBorrowList({}))
+    dispatch(queryShelfList({}))
   }
   componentWillUnmount() { }
 
@@ -83,52 +79,47 @@ class Index extends Component {
 
   componentDidHide() { }
 
-  handleClick(tabKey) {
-    const { dispatch } = this.props;
+  onUpload() {
+
+  }
+  onLower() {
+
+  }
+  handleChange(value) {
     this.setState({
-      current: tabKey,
+      value
     })
-    // dispatch(queryBookList({}))
   }
 
-  handleSingle(index) {
-
+  renderList() {
+    const { shelfList } = this.props;
+    const { value } = this.state;
+    const options = shelfList.map(item => ({
+      label: item.bookName,
+      value: item.bookId,
+      disabled: !item.canLowershelf
+    }))
+    return <AtRadio
+      options={options}
+      value={value}
+      onClick={this.handleChange}
+    />
   }
+
 
   render() {
-    const swipeOperation = [
-      {
-        text: '取消',
-        style: {
-          backgroundColor: '#6190E8'
-        }
-      },
-      {
-        text: '还书',
-        style: {
-          backgroundColor: '#FF4949'
-        }
-      }
-    ]
-    const { borrowList } = this.props.borrow;
+    const { value } = this.state;
     return (
-      <View>
-        <View className='at-row at-row__justify--center' style={{ lineHeight: '100rpx', height: '100rpx' }}>
-          <View className='at-col at-col-5' style={{ textAlign: 'center' }}>书籍名称</View>
-          <View className='at-col at-col-5' style={{ textAlign: 'center' }}>应还日期</View>
+      <View className="bookShelf">
+        {this.renderList()}
+        <View className="fixedFooter at-row">
+          <View className="at-col at-col-6">
+            <AtButton type="secondary" onClick={this.onUpload} className="footerButton">上传书籍</AtButton>
+          </View>
+          <View className="at-col at-col-6">
+            <AtButton type="primary" className="footerButton" disabled={!value} onClick={this.onLower}>下架书籍</AtButton>
+          </View>
         </View>
-        <AtList>
-          {borrowList.map((item, index) => (
-            <AtSwipeAction
-              key={index}
-              onOpened={() => this.handleSingle(index)}
-              // isOpened={item.isOpened}
-              options={swipeOperation}
-            >
-              <AtListItem title={item.bookName} extraText={item.shouldReturnDate} />
-            </AtSwipeAction>
-          ))}
-        </AtList>
       </View>
     )
   }

@@ -5,8 +5,6 @@ const INITIAL_STATE = {
 }
 
 export default function bookShelf(state = INITIAL_STATE, action) {
-    console.warn(action)
-    console.warn(state)
     switch (action.type) {
         case UPDATE_STATE:
             return {
