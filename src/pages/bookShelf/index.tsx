@@ -1,7 +1,7 @@
 import { ComponentClass } from 'react'
-import Taro, { Component, Config } from '@tarojs/taro'
+import Taro, { Component, Config, showModal, showTabBar, showToast } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { AtRadio, AtButton } from 'taro-ui'
+import { AtRadio, AtButton, AtModal, AtModalHeader, AtModalContent, AtModalAction, AtToast } from 'taro-ui'
 import { connect } from '@tarojs/redux'
 import { autobind } from 'core-decorators'
 import { queryShelfList } from '../../actions/bookShelf';
@@ -18,14 +18,14 @@ import './index.less'
 // #endregion
 
 type BookItem = {
-  bookId: string
-  bookName: string
-  canLowershelf: boolean
-  shelfDate: string
+  bookId?: string
+  bookName?: string
+  canLowershelf?: boolean
+  shelfDate?: string
 }
 
 type PageStateProps = {
-  shelfList: Array<BookItem>;
+  shelfList: Array<BookItem> | [];
 }
 
 type PageDispatchProps = {
@@ -36,6 +36,10 @@ type PageOwnProps = {}
 
 type PageState = {
   value: string
+  showModal: boolean
+  showToast: boolean
+  toastText: string
+  toastStatus: "loading" | "error" | "success" | undefined
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -66,6 +70,10 @@ class Index extends Component {
     super(props);
     this.state = {
       value: '',
+      showModal: false,
+      showToast: false,
+      toastText: '',
+      toastStatus: 'loading',
     }
   }
 
@@ -82,8 +90,42 @@ class Index extends Component {
   onUpload() {
 
   }
-  onLower() {
 
+  onShowToast(text = "", status = '', duration = 0) {
+    this.setState({
+      toastStatus: status || 'loading',
+      toastText: text || '',
+      showToast: true,
+    })
+    duration && setTimeout(() => {
+      this.onHideToast()
+    }, duration)
+  }
+
+  onHideToast() {
+    this.setState({
+      showToast: false,
+      toastStatus: '',
+      toastText: '',
+      duration: 0
+    })
+  }
+
+  onLower() {
+    this.setState({
+      showModal: true,
+    })
+  }
+
+  onCancel() {
+    this.setState({
+      showModal: false
+    })
+  }
+  onConfirm() {
+    this.setState({
+      showModal: false
+    })
   }
   handleChange(value) {
     this.setState({
@@ -91,8 +133,9 @@ class Index extends Component {
     })
   }
 
+
   renderList() {
-    const { shelfList } = this.props;
+    const { shelfList = [] } = this.props;
     const { value } = this.state;
     const options = shelfList.map(item => ({
       label: item.bookName,
@@ -109,6 +152,9 @@ class Index extends Component {
 
   render() {
     const { value } = this.state;
+    const { shelfList } = this.props;
+    const selectedBook: BookItem = shelfList.find(item => item.bookId === value) || {}
+    console.log(selectedBook)
     return (
       <View className="bookShelf">
         {this.renderList()}
@@ -119,7 +165,20 @@ class Index extends Component {
           <View className="at-col at-col-6">
             <AtButton type="primary" className="footerButton" disabled={!value} onClick={this.onLower}>下架书籍</AtButton>
           </View>
+          <AtModal isOpened={this.state.showModal}>
+            <AtModalHeader>确认下架本书籍吗</AtModalHeader>
+            <AtModalContent>
+              <View className="modalContent">书籍名称：{selectedBook.bookName}</View>
+              <View className="modalContent" >上架时间：{selectedBook.shelfDate}</View>
+            </AtModalContent>
+            <AtModalAction>
+              <button><View onClick={this.onCancel}>取消</View></button>
+              <button><View onClick={this.onConfirm}>确定</View></button>
+            </AtModalAction>
+          </AtModal>
+          <AtToast isOpened={this.state.showToast} duration={0} text={this.state.toastText} status={this.state.toastStatus}></AtToast>
         </View>
+
       </View>
     )
   }
