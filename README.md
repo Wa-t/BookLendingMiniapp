@@ -31,6 +31,14 @@ $ yarn global add @tarojs/cli
 # OR 安装了 cnpm，使用 cnpm 安装 CLI
 $ cnpm install -g @tarojs/cli
 ```
+
+### 下载并运行代码
+
+```
+git clone https://github.com/Wa-t/BookLendingMiniapp.git
+
+taro start
+```
 # 扫码体验
 > 暂无
 
